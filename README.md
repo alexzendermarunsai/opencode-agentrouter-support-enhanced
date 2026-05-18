@@ -50,7 +50,6 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 
 ---
 
-## Quick start
 
 ## Quick Start
 

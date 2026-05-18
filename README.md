@@ -226,6 +226,15 @@ baseURL: "https://agentrouter.org/v1",
 
 ---
 
+## Contact
+
+- **Telegram:** [@Jvlock](https://t.me/Jvlock)
+- **Email:** [faresnoser0@gmail.com](mailto:faresnoser0@gmail.com)
+
+Feel free to reach out for questions, suggestions, or feedback.
+
+---
+
 ## License
 
 [MIT](./LICENSE)

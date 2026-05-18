@@ -39,9 +39,9 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 
 ```
 ┌──────────┐     OpenAI-compat      ┌──────────────┐     AgentRouter API     ┌─────────────┐
-│ OpenCode │  ──────────────────>   │ Local Proxy  │  ───────────────────>   │ AgentRouter  │
-│          │  <──────────────────   │  :4000       │  <───────────────────   │              │
-└──────────┘    SSE stream back     └──────────────┘      stream relay      └─────────────┘
+│ OpenCode │  ──────────────────>   │ Local Proxy  │  ───────────────────>   │ AgentRouter │
+│          │  <──────────────────   │  :4000       │  <───────────────────   │             │
+└──────────┘    SSE stream back     └──────────────┘      stream relay       └─────────────┘
 ```
 
 1. **Proxy** starts locally and exposes an OpenAI-compatible REST API

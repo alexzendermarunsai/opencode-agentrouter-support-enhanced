@@ -29,6 +29,7 @@
 - [Usage](#usage)
 - [Project structure](#project-structure)
 - [Configuration](#configuration)
+- [Customization](#customization)
 - [License](#license)
 
 ---
@@ -39,9 +40,9 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 
 ```
 ┌──────────┐     OpenAI-compat      ┌──────────────┐     AgentRouter API     ┌─────────────┐
-│ OpenCode │  ──────────────────>   │ Local Proxy  │  ───────────────────>   │ AgentRouter  │
-│          │  <──────────────────   │  :4000       │  <───────────────────   │              │
-└──────────┘    SSE stream back     └──────────────┘      stream relay      └─────────────┘
+│ OpenCode │  ──────────────────>   │ Local Proxy  │  ───────────────────>   │ AgentRouter │
+│          │  <──────────────────   │  :4000       │  <───────────────────   │             │
+└──────────┘    SSE stream back     └──────────────┘      stream relay       └─────────────┘
 ```
 
 1. **Proxy** starts locally and exposes an OpenAI-compatible REST API
@@ -167,6 +168,78 @@ curl http://127.0.0.1:4000/v1/models
 ### `opencode.jsonc`
 
 Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai-compatible` adapter. It connects to `http://127.0.0.1:4000/v1` and exposes the `deepseek-v4-pro` model.
+
+---
+
+## Customization
+
+Here are the most common changes you'll want to make:
+
+### Change the model
+
+Edit `opencode.jsonc` to use a different model from AgentRouter:
+
+```jsonc
+"models": {
+  "deepseek-v4-pro": {
+    "name": "deepseek v4 pro",
+    "id": "deepseek-v4-pro"
+  }
+  // Add more models here
+}
+```
+
+Replace the `id` and `name` with whatever model AgentRouter supports.
+
+### Add multiple models
+
+You can register several models in the same provider:
+
+```jsonc
+"models": {
+  "deepseek-v4-pro": {
+    "name": "deepseek v4 pro",
+    "id": "deepseek-v4-pro"
+  },
+  "claude-sonnet-4": {
+    "name": "claude sonnet 4",
+    "id": "claude-sonnet-4"
+  }
+}
+```
+
+### Change the proxy port
+
+Set a different port via environment variable:
+
+```bash
+# .env
+PORT=5000
+```
+
+Or pass it inline:
+
+```bash
+PORT=5000 npm start
+```
+
+### Change the API key
+
+Update the `AGENTROUTER_API_KEY` value in `.env`:
+
+```ini
+AGENTROUTER_API_KEY=sk-your-new-key
+```
+
+No need to restart the proxy if you're using `npm run dev` (auto-reloads).
+
+### Point to a different API base URL
+
+If AgentRouter changes their endpoint, update `server.js:13`:
+
+```js
+baseURL: "https://agentrouter.org/v1",
+```
 
 ---
 

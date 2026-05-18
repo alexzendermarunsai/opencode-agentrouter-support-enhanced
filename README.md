@@ -56,7 +56,7 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 ### 1. Clone the repository
 
 ```bash
-git clone [https://github.com/YOUR_USERNAME/opencode-agentrouter-proxy.git](https://github.com/Fares-Nosair/opencode-agentrouter-support.git)
+git clone https://github.com/Fares-Nosair/opencode-agentrouter-support.git
 cd opencode-agentrouter-proxy
 ```
 

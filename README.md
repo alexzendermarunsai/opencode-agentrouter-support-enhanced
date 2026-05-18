@@ -51,18 +51,40 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 
 ---
 
-## Quick start
+
+## Quick Start
+
+### 1. Clone the repository
 
 ```bash
-# 1. Install
+git clone https://github.com/Fares-Nosair/opencode-agentrouter-support.git
+cd opencode-agentrouter-proxy
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
+```
 
-# 2. Set your API key
-cp .env.example .env
-# then edit .env with your key
+### 3. Create a `.env` file
 
-# 3. Start the proxy
-npm start
+Run this command:
+
+```bash
+echo AGENTROUTER_API_KEY=sk-your-key-here > .env
+```
+
+### 4. Start the proxy
+
+```bash
+node agenrouter_server.js
+```
+
+You should see:
+
+```bash
+Proxy running on http://127.0.0.1:4000
 ```
 
 ---

@@ -33,6 +33,7 @@
 - [License](#license)
 
 ---
+<img width="543" height="372" alt="Screenshot 2026-05-19 013943" src="https://github.com/user-attachments/assets/360288cd-1931-4ed4-b2b8-6347e5132e30" />
 
 ## How it works
 

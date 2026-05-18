@@ -68,10 +68,10 @@ npm install
 
 ### 3. Create a `.env` file
 
-Create a file named `.env` in the project root:
+Run this command:
 
-```ini
-AGENTROUTER_API_KEY=sk-your-key-here
+```bash
+echo AGENTROUTER_API_KEY=sk-your-key-here > .env
 ```
 
 ### 4. Start the proxy

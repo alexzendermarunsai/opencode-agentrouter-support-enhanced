@@ -1,25 +1,77 @@
-# AgentRouter for OpenCode
+<p align="center">
+  <img src="https://opencode.ai/favicon.ico" width="48" alt="OpenCode" />
+  <span style="font-size: 2rem; margin: 0 8px;">+</span>
+  <span style="font-size: 2rem; font-weight: bold; color: #6366f1;">AgentRouter</span>
+</p>
 
-Use [AgentRouter](https://agentrouter.org) models (like DeepSeek V4 Pro) directly in [OpenCode](https://opencode.ai) via a local OpenAI-compatible proxy server.
+<h1 align="center">AgentRouter for OpenCode</h1>
+
+<p align="center">
+  <b>Use AgentRouter models (DeepSeek V4 Pro) in OpenCode</b>
+  <br />
+  via a lightweight, local OpenAI-compatible proxy.
+</p>
+
+<p align="center">
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js" alt="Node" /></a>
+  <a href="https://opencode.ai"><img src="https://img.shields.io/badge/opencode-ready-6366f1" alt="OpenCode" /></a>
+  <a href="https://agentrouter.org"><img src="https://img.shields.io/badge/powered%20by-agentrouter-ff6b6b" alt="AgentRouter" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License" /></a>
+</p>
+
+---
+
+## Table of Contents
+
+- [How it works](#how-it-works)
+- [Quick start](#quick-start)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Project structure](#project-structure)
+- [Configuration](#configuration)
+- [License](#license)
+
+---
 
 ## How it works
 
-AgentRouter provides an OpenAI-compatible API, but OpenCode expects providers to be configured through its `@ai-sdk/openai-compatible` adapter. This proxy bridges the gap:
-
-1. The proxy server runs locally and exposes an OpenAI-compatible API on `http://127.0.0.1:4000`
-2. Incoming chat completion requests are relayed to AgentRouter's API with streaming enabled
-3. OpenCode is configured to point to this local proxy as a custom provider
+AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers registered through its `@ai-sdk/openai-compatible` adapter. This proxy bridges the two:
 
 ```
-OpenCode  -->  Local Proxy (:4000)  -->  AgentRouter API
+┌──────────┐     OpenAI-compat      ┌──────────────┐     AgentRouter API     ┌─────────────┐
+│ OpenCode │  ──────────────────>   │ Local Proxy  │  ───────────────────>   │ AgentRouter  │
+│          │  <──────────────────   │  :4000       │  <───────────────────   │              │
+└──────────┘    SSE stream back     └──────────────┘      stream relay      └─────────────┘
 ```
 
-## Prerequisites
+1. **Proxy** starts locally and exposes an OpenAI-compatible REST API
+2. **OpenCode** is configured with `@ai-sdk/openai-compatible` pointing to the proxy
+3. Chat requests are streamed through the proxy → AgentRouter → back to OpenCode
 
-- [Node.js](https://nodejs.org/) 18+
-- An API key from [AgentRouter](https://agentrouter.org)
+---
+
+## Quick start
+
+```bash
+# 1. Install
+npm install
+
+# 2. Set your API key
+cp .env.example .env
+# then edit .env with your key
+
+# 3. Start the proxy
+npm start
+```
+
+---
 
 ## Setup
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 18 or later
+- An API key from [AgentRouter](https://agentrouter.org) (free tier available)
 
 ### 1. Install dependencies
 
@@ -29,19 +81,17 @@ npm install
 
 ### 2. Configure your API key
 
-Copy the example environment file and add your AgentRouter API key:
-
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and set your key:
+Open `.env` and set your key:
 
-```
+```ini
 AGENTROUTER_API_KEY=sk-your-actual-key-here
 ```
 
-> **Security note:** The `.env` file is listed in `.gitignore` so your key will never be committed.
+> **Security note:** `.env` is in `.gitignore` so your key stays private.
 
 ### 3. Start the proxy
 
@@ -49,7 +99,7 @@ AGENTROUTER_API_KEY=sk-your-actual-key-here
 npm start
 ```
 
-You should see:
+Expected output:
 
 ```
 AgentRouter proxy running on http://127.0.0.1:4000
@@ -57,53 +107,69 @@ AgentRouter proxy running on http://127.0.0.1:4000
 
 ### 4. Configure OpenCode
 
-Copy the `opencode.jsonc` file to your OpenCode config directory:
+Place the `opencode.jsonc` file in your OpenCode config directory:
 
-| Platform | Location |
-|----------|----------|
+| Platform | Config path |
+|----------|-------------|
 | Windows | `C:\Users\<you>\.opencode\opencode.jsonc` |
-| macOS/Linux | `~/.opencode/opencode.jsonc` |
+| macOS / Linux | `~/.opencode/opencode.jsonc` |
 
-Or merge the `provider` section into your existing OpenCode configuration.
+You can also merge the `provider` section into your existing `opencode.jsonc`.
+
+---
 
 ## Usage
 
-Once the proxy is running and OpenCode is configured, you can select **AgentRouter** as your provider in OpenCode and use the **deepseek v4 pro** model.
+Once everything is running, select **AgentRouter** as your provider in OpenCode and pick the **deepseek v4 pro** model.
 
-### Verify the proxy is working
+### Verify the proxy
 
 ```bash
 curl http://127.0.0.1:4000/
-# {"status":"ok","message":"AgentRouter Roo Proxy Running"}
-
-curl http://127.0.0.1:4000/v1/models
-# {"object":"list","data":[{"id":"deepseek-v4-pro",...}]}
 ```
+
+```json
+{ "status": "ok", "message": "AgentRouter Roo Proxy Running" }
+```
+
+```bash
+curl http://127.0.0.1:4000/v1/models
+```
+
+```json
+{ "object": "list", "data": [{ "id": "deepseek-v4-pro", ... }] }
+```
+
+---
 
 ## Project structure
 
 ```
-├── server.js          # Proxy server
-├── opencode.jsonc     # OpenCode provider config
-├── package.json       # Dependencies and scripts
-├── .env.example       # Environment variable template
+├── server.js           # Proxy server (the core)
+├── opencode.jsonc      # OpenCode provider configuration
+├── package.json        # Dependencies and scripts
+├── .env.example        # Environment variable template
 ├── .gitignore
 └── README.md
 ```
 
-## Configuration reference
+---
+
+## Configuration
 
 ### `server.js`
 
-| Environment variable | Default | Description |
-|---------------------|---------|-------------|
-| `AGENTROUTER_API_KEY` | — | Your AgentRouter API key (required) |
-| `PORT` | `4000` | Port for the local proxy |
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `AGENTROUTER_API_KEY` | — | Your AgentRouter API key **(required)** |
+| `PORT` | `4000` | Port to run the proxy on |
 
 ### `opencode.jsonc`
 
-The configuration registers a custom provider named `agentrouter` in OpenCode using the `@ai-sdk/openai-compatible` adapter. It connects to the local proxy at `http://127.0.0.1:4000/v1` and exposes the `deepseek-v4-pro` model.
+Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai-compatible` adapter. It connects to `http://127.0.0.1:4000/v1` and exposes the `deepseek-v4-pro` model.
+
+---
 
 ## License
 
-MIT
+[MIT](./LICENSE)

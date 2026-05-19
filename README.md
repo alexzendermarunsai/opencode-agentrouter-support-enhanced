@@ -77,7 +77,17 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 - [Node.js](https://nodejs.org/) 18 or later
 - An API key from [AgentRouter](https://agentrouter.org) (free tier available)
 
-### 1. Configure your API key
+### 1. Clone or download the files
+
+Place both `agenrouter_server.js` and `opencode.jsonc` in the same directory — preferably your OpenCode config directory (`~/.opencode/`). Keeping them together makes management easier.
+
+### 2. Install dependencies
+
+```bash
+npm install express cors openai
+```
+
+### 3. Configure your API key
 
 Open `agenrouter_server.js` and replace the placeholder API key on line 11:
 
@@ -85,7 +95,7 @@ Open `agenrouter_server.js` and replace the placeholder API key on line 11:
 apiKey: "sk-your-actual-key-here",
 ```
 
-### 2. Start the proxy
+### 4. Start the proxy
 
 ```bash
 node agenrouter_server.js
@@ -97,9 +107,9 @@ Expected output:
 AgentRouter proxy running on http://127.0.0.1:4000
 ```
 
-### 3. Configure OpenCode
+### 5. Configure OpenCode
 
-Place the `opencode.jsonc` file in your OpenCode config directory:
+Place the `opencode.jsonc` file in your OpenCode config directory (or keep it there if you already placed both files together in step 1):
 
 | Platform | Config path |
 |----------|-------------|

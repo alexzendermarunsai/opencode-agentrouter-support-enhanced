@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
 const client = new OpenAI({
-  apiKey: process.env.AGENTROUTER_API_KEY,
+  apiKey: "sk-your-api-key-here", // <-- PUT YOUR AGENTROUTER API KEY HERE
   baseURL: "https://agentrouter.org/v1",
 
   defaultHeaders: {
@@ -39,6 +39,18 @@ app.get("/v1/models", (req, res) => {
     data: [
       {
         id: "deepseek-v4-pro",
+        object: "model",
+        created: Date.now(),
+        owned_by: "agentrouter"
+      },
+      {
+        id: "deepseek-v4-flash",
+        object: "model",
+        created: Date.now(),
+        owned_by: "agentrouter"
+      },
+      {
+        id: "glm-5.1",
         object: "model",
         created: Date.now(),
         owned_by: "agentrouter"
@@ -78,7 +90,7 @@ app.post("/v1/chat/completions", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = 4000; // Change this if you want a different port
 
 app.listen(PORT, () => {
   console.log(`AgentRouter proxy running on http://127.0.0.1:${PORT}`);

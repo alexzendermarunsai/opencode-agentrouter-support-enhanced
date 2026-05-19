@@ -3,7 +3,7 @@
 
   "provider": {
     "agentrouter": {
-      "name": "AgentRouter",
+      "name": "AgenRouter",
       "npm": "@ai-sdk/openai-compatible",
 
       "options": {
@@ -15,6 +15,15 @@
         "deepseek-v4-pro": {
           "name": "deepseek v4 pro",
           "id": "deepseek-v4-pro"
+        },
+      
+        "deepseek-v4-flash": {
+          "name": "deepseek v4 flash",
+          "id": "deepseek-v4-flash"
+        },
+        "glm-5.1": {
+          "name": "glm 5.1",
+          "id": "glm-5.1"
         }
       }
     }

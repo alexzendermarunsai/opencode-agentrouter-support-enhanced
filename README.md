@@ -149,48 +149,15 @@ Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai
 
 ## Customization
 
-Here are the most common changes you'll want to make:
-
-### Change the model
-
-Edit `opencode.jsonc` to use a different model from AgentRouter:
-
-```jsonc
-"models": {
-  "deepseek-v4-pro": {
-    "name": "deepseek v4 pro",
-    "id": "deepseek-v4-pro"
-  },
-  "deepseek-v4-flash": {
-    "name": "deepseek v4 flash",
-    "id": "deepseek-v4-flash"
-  },
-  "glm-5.1": {
-    "name": "glm 5.1",
-    "id": "glm-5.1"
-  }
-}
-```
-
-To add more models, add new entries following the same pattern with the model `id` and `name` from AgentRouter.
-
 ### Change the proxy port
 
-Edit line 93 in `agenrouter_server.js`:
+Only needed if port **4000** is already in use. Edit line 93 in `agenrouter_server.js`:
 
 ```js
-const PORT = 5000;
+const PORT = 5000; // change to any available port
 ```
 
-### Change the API key
-
-Replace the `apiKey` value on line 11 in `agenrouter_server.js`:
-
-```js
-apiKey: "sk-your-new-key",
-```
-
-Restart the proxy after changing the key.
+Then update the `baseURL` in `opencode.jsonc` to match the new port.
 
 ### Point to a different API base URL
 

@@ -26,7 +26,7 @@
 <h1 align="center">AgentRouter for OpenCode</h1>
 
 <p align="center">
-  <b>Use AgentRouter models (DeepSeek V4 Pro) in OpenCode</b>
+  <b>Use AgentRouter models in OpenCode</b>
   <br />
   via a lightweight, local OpenAI-compatible proxy.
 </p>

@@ -24,7 +24,6 @@
 ## Table of Contents
 
 - [How it works](#how-it-works)
-- [Quick start](#quick-start)
 - [Setup](#setup)
 - [Usage](#usage)
 - [Project structure](#project-structure)
@@ -58,30 +57,18 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 - [Node.js](https://nodejs.org/) 18 or later
 - An API key from [AgentRouter](https://agentrouter.org) (free tier available)
 
-### 1. Install dependencies
+### 1. Configure your API key
 
-```bash
-npm install
+Open `agenrouter_server.js` and replace the placeholder API key on line 11:
+
+```js
+apiKey: "sk-your-actual-key-here",
 ```
 
-### 2. Configure your API key
+### 2. Start the proxy
 
 ```bash
-cp .env.example .env
-```
-
-Open `.env` and set your key:
-
-```ini
-AGENTROUTER_API_KEY=sk-your-actual-key-here
-```
-
-> **Security note:** `.env` is in `.gitignore` so your key stays private.
-
-### 3. Start the proxy
-
-```bash
-npm start
+node agenrouter_server.js
 ```
 
 Expected output:
@@ -90,7 +77,7 @@ Expected output:
 AgentRouter proxy running on http://127.0.0.1:4000
 ```
 
-### 4. Configure OpenCode
+### 3. Configure OpenCode
 
 Place the `opencode.jsonc` file in your OpenCode config directory:
 
@@ -105,7 +92,7 @@ You can also merge the `provider` section into your existing `opencode.jsonc`.
 
 ## Usage
 
-Once everything is running, select **AgentRouter** as your provider in OpenCode and pick the **deepseek v4 pro** model.
+Once everything is running, select **AgentRouter** as your provider in OpenCode and pick one of the available models: **deepseek v4 pro**, **deepseek v4 flash**, or **glm 5.1**.
 
 ### Verify the proxy
 
@@ -130,11 +117,9 @@ curl http://127.0.0.1:4000/v1/models
 ## Project structure
 
 ```
-├── server.js           # Proxy server (the core)
-├── opencode.jsonc      # OpenCode provider configuration
-├── package.json        # Dependencies and scripts
-├── .env.example        # Environment variable template
-├── .gitignore
+├── agenrouter_server.js   # Proxy server (the core)
+├── opencode.jsonc         # OpenCode provider configuration
+├── LICENSE
 └── README.md
 ```
 
@@ -142,16 +127,23 @@ curl http://127.0.0.1:4000/v1/models
 
 ## Configuration
 
-### `server.js`
+### `agenrouter_server.js`
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `AGENTROUTER_API_KEY` | — | Your AgentRouter API key **(required)** |
-| `PORT` | `4000` | Port to run the proxy on |
+| Variable | Location | Description |
+|----------|----------|-------------|
+| `apiKey` | Line 11 | Your AgentRouter API key **(required)** |
+| `PORT` | Line 93 | Port to run the proxy on (default: `4000`) |
+| `baseURL` | Line 12 | AgentRouter API base URL |
 
 ### `opencode.jsonc`
 
-Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai-compatible` adapter. It connects to `http://127.0.0.1:4000/v1` and exposes the `deepseek-v4-pro` model.
+Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai-compatible` adapter. It connects to `http://127.0.0.1:4000/v1` and exposes the following models:
+
+| Model ID | Display Name |
+|----------|-------------|
+| `deepseek-v4-pro` | deepseek v4 pro |
+| `deepseek-v4-flash` | deepseek v4 flash |
+| `glm-5.1` | glm 5.1 |
 
 ---
 
@@ -168,58 +160,41 @@ Edit `opencode.jsonc` to use a different model from AgentRouter:
   "deepseek-v4-pro": {
     "name": "deepseek v4 pro",
     "id": "deepseek-v4-pro"
-  }
-  // Add more models here
-}
-```
-
-Replace the `id` and `name` with whatever model AgentRouter supports.
-
-### Add multiple models
-
-You can register several models in the same provider:
-
-```jsonc
-"models": {
-  "deepseek-v4-pro": {
-    "name": "deepseek v4 pro",
-    "id": "deepseek-v4-pro"
   },
-  "claude-sonnet-4": {
-    "name": "claude sonnet 4",
-    "id": "claude-sonnet-4"
+  "deepseek-v4-flash": {
+    "name": "deepseek v4 flash",
+    "id": "deepseek-v4-flash"
+  },
+  "glm-5.1": {
+    "name": "glm 5.1",
+    "id": "glm-5.1"
   }
 }
 ```
+
+To add more models, add new entries following the same pattern with the model `id` and `name` from AgentRouter.
 
 ### Change the proxy port
 
-Set a different port via environment variable:
+Edit line 93 in `agenrouter_server.js`:
 
-```bash
-# .env
-PORT=5000
-```
-
-Or pass it inline:
-
-```bash
-PORT=5000 npm start
+```js
+const PORT = 5000;
 ```
 
 ### Change the API key
 
-Update the `AGENTROUTER_API_KEY` value in `.env`:
+Replace the `apiKey` value on line 11 in `agenrouter_server.js`:
 
-```ini
-AGENTROUTER_API_KEY=sk-your-new-key
+```js
+apiKey: "sk-your-new-key",
 ```
 
-No need to restart the proxy if you're using `npm run dev` (auto-reloads).
+Restart the proxy after changing the key.
 
 ### Point to a different API base URL
 
-If AgentRouter changes their endpoint, update `server.js:13`:
+If AgentRouter changes their endpoint, update `agenrouter_server.js:12`:
 
 ```js
 baseURL: "https://agentrouter.org/v1",

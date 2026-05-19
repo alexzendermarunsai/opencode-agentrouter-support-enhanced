@@ -52,6 +52,8 @@
 
 ---
 <img width="793" height="476" alt="Screenshot 2026-05-19 122423" src="https://github.com/user-attachments/assets/687bd08d-5250-4c1b-92de-9dc6c6f3248a" />
+
+---
 ## How it works
 
 AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers registered through its `@ai-sdk/openai-compatible` adapter. This proxy bridges the two:

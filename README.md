@@ -1,7 +1,26 @@
 <p align="center">
-  <img src="https://opencode.ai/favicon.ico" width="48" alt="OpenCode" />
-  <span style="font-size: 2rem; margin: 0 8px;">+</span>
-  <span style="font-size: 2rem; font-weight: bold; color: #6366f1;">AgentRouter</span>
+  <a href="https://opencode.ai/">
+    <img
+      width="234"
+      height="42"
+      alt="OpenCode"
+      src="https://github.com/user-attachments/assets/9c5d41a3-c331-4676-81a3-916cef69441b"
+      style="vertical-align: middle;"
+    />
+  </a>
+
+  <span style="font-size: 2rem; margin: 0 14px; vertical-align: middle;">
+    +
+  </span>
+
+  <a href="https://agentrouter.org/">
+    <img
+      src="https://github.com/user-attachments/assets/5a4f6e27-bf2e-4cbe-82a6-3837cb9f2a4c"
+      height="70"
+      alt="AgentRouter"
+      style="vertical-align: middle;"
+    />
+  </a>
 </p>
 
 <h1 align="center">AgentRouter for OpenCode</h1>

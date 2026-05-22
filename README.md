@@ -79,7 +79,7 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 
 ### 1. Clone or download the files
 
-Place both `agenrouter_server.js` and `opencode.jsonc` in the same directory — preferably your OpenCode config directory (`~/.opencode/`). Keeping them together makes management easier.
+Place both `agenrouter_server.js` and `opencode.jsonc` in the same directory — preferably your OpenCode config directory (`C:\Users\<you>\.config\opencode\`). Keeping them together makes management easier.
 
 ### 2. Install dependencies
 

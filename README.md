@@ -113,7 +113,7 @@ Place the `opencode.jsonc` file in your OpenCode config directory (or keep it th
 
 | Platform | Config path |
 |----------|-------------|
-| Windows | `C:\Users\<you>\.opencode\opencode.jsonc` |
+| Windows | `C:\Users\<you>\.config\opencode\opencode.jsonc` |
 | macOS / Linux | `~/.opencode/opencode.jsonc` |
 
 You can also merge the `provider` section into your existing `opencode.jsonc`.

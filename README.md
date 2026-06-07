@@ -51,7 +51,8 @@
 - [License](#license)
 
 ---
-<img width="793" height="476" alt="Screenshot 2026-05-19 122423" src="https://github.com/user-attachments/assets/687bd08d-5250-4c1b-92de-9dc6c6f3248a" />
+<img width="1439" height="801" alt="Screenshot 2026-06-07 113032" src="https://github.com/user-attachments/assets/913c63a7-7f7f-496e-98e0-9193ab08731c" />
+
 
 ---
 ## How it works

@@ -33,19 +33,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/v1/models", (req, res) => {
-  res.json({
-    object: "list",
-    data: [
-      { id: "glm-5.1",           object: "model", created: 1700000000, owned_by: "zhipu" },
-      { id: "glm-4.7",           object: "model", created: 1700000000, owned_by: "zhipu" },
-      { id: "glm-4.5-air",       object: "model", created: 1700000000, owned_by: "zhipu" },
-      { id: "claude-opus-4-7",   object: "model", created: 1700000000, owned_by: "anthropic" },
-      { id: "claude-sonnet-4-6", object: "model", created: 1700000000, owned_by: "anthropic" },
-      { id: "kimi-k2.6",         object: "model", created: 1700000000, owned_by: "moonshot" },
-      { id: "qwen3-coder-480b",  object: "model", created: 1700000000, owned_by: "qwen" },
-      { id: "gemini-2.5-flash",  object: "model", created: 1700000000, owned_by: "google" }
-    ]
-  });
+  res.json({ object: "list", data: [] });
 });
 
 app.post("/v1/chat/completions", async (req, res) => {

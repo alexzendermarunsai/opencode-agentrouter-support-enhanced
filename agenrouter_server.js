@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
 const client = new OpenAI({
-  apiKey: "sk-your-api-key-here", // <-- PUT YOUR AGENTROUTER API KEY HERE
+  apiKey: "sk-usgbzodDH5NXfqR7KMkS6dIcrfMXdbR1FqtV7c4sqs2KozN3",
   baseURL: "https://agentrouter.org/v1",
 
   defaultHeaders: {

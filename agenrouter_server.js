@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
+require("dotenv").config();
 
 const app = express();
 
@@ -8,7 +9,7 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
 const client = new OpenAI({
-  apiKey: "sk-usgbzodDH5NXfqR7KMkS6dIcrfMXdbR1FqtV7c4sqs2KozN3",
+  apiKey: process.env.AGENTROUTER_API_KEY,
   baseURL: "https://agentrouter.org/v1",
 
   defaultHeaders: {
@@ -33,30 +34,17 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/v1/models", (req, res) => {
-  res.json({
-    object: "list",
-    data: [
-      {
-        id: "deepseek-v4-pro",
-        object: "model",
-        created: Date.now(),
-        owned_by: "agentrouter"
-      },
-      {
-        id: "deepseek-v4-flash",
-        object: "model",
-        created: Date.now(),
-        owned_by: "agentrouter"
-      },
-      {
-        id: "glm-5.1",
-        object: "model",
-        created: Date.now(),
-        owned_by: "agentrouter"
-      }
-    ]
-  });
+app.get("/v1/models", async (req, res) => {
+  try {
+    const response = await client.models.list();
+    res.json(response);
+  } catch (err) {
+    console.error("Models Error:", err);
+    res.status(err.status || 500).json({
+      error: true,
+      message: err.message
+    });
+  }
 });
 
 app.post("/v1/chat/completions", async (req, res) => {

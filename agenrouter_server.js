@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
+require("dotenv").config();
 
 const app = express();
 
@@ -8,13 +9,14 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
 const client = new OpenAI({
-  apiKey: "type your api key here",
+  apiKey: process.env.AGENTROUTER_API_KEY,
   baseURL: "https://agentrouter.org/v1",
 
   defaultHeaders: {
     "HTTP-Referer": "https://github.com/RooVetGit/Roo-Cline",
     "X-Title": "Roo Code",
     "User-Agent": "RooCode/3.54.0",
+
     "X-Stainless-Arch": "x64",
     "X-Stainless-Lang": "js",
     "X-Stainless-OS": "Windows",
@@ -28,17 +30,25 @@ const client = new OpenAI({
 app.get("/", (req, res) => {
   res.json({
     status: "ok",
-    message: "AgentRouter Proxy Running"
+    message: "AgentRouter Roo Proxy Running"
   });
 });
 
-app.get("/v1/models", (req, res) => {
-  res.json({ object: "list", data: [] });
+app.get("/v1/models", async (req, res) => {
+  try {
+    const response = await client.models.list();
+    res.json(response);
+  } catch (err) {
+    console.error("Models Error:", err);
+    res.status(err.status || 500).json({
+      error: true,
+      message: err.message
+    });
+  }
 });
 
 app.post("/v1/chat/completions", async (req, res) => {
   try {
-
     if (!req.body || !req.body.messages) {
       return res.status(400).json({
         error: {
@@ -70,7 +80,6 @@ app.post("/v1/chat/completions", async (req, res) => {
     res.end();
 
   } catch (err) {
-
     console.error("Proxy Error:", err);
 
     if (!res.headersSent) {
@@ -85,12 +94,11 @@ app.post("/v1/chat/completions", async (req, res) => {
       res.write(`data: ${JSON.stringify({ error: { message: err.message } })}\n\n`);
       res.end();
     }
-
   }
 });
 
 const PORT = 4000;
 
 app.listen(PORT, () => {
-  console.log(`Proxy running on http://127.0.0.1:${PORT}`);
+  console.log(`AgentRouter proxy running on http://127.0.0.1:${PORT}`);
 });

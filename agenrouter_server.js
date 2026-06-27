@@ -49,6 +49,16 @@ app.get("/v1/models", async (req, res) => {
 
 app.post("/v1/chat/completions", async (req, res) => {
   try {
+    if (!req.body || !req.body.messages) {
+      return res.status(400).json({
+        error: {
+          message: "Invalid request body: missing messages",
+          type: "invalid_request_error",
+          code: 400
+        }
+      });
+    }
+
     const body = {
       ...req.body,
       stream: true
@@ -61,7 +71,9 @@ app.post("/v1/chat/completions", async (req, res) => {
     res.setHeader("Connection", "keep-alive");
 
     for await (const chunk of stream) {
-      res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+      if (chunk) {
+        res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+      }
     }
 
     res.write("data: [DONE]\n\n");
@@ -70,15 +82,22 @@ app.post("/v1/chat/completions", async (req, res) => {
   } catch (err) {
     console.error("Proxy Error:", err);
 
-    res.status(err.status || 500).json({
-      error: true,
-      message: err.message,
-      details: err.error || null
-    });
+    if (!res.headersSent) {
+      res.status(err.status || 500).json({
+        error: {
+          message: err.message || "Internal proxy error",
+          type: err.type || "proxy_error",
+          code: err.status || 500
+        }
+      });
+    } else {
+      res.write(`data: ${JSON.stringify({ error: { message: err.message } })}\n\n`);
+      res.end();
+    }
   }
 });
 
-const PORT = 4000; // Change this if you want a different port
+const PORT = 4000;
 
 app.listen(PORT, () => {
   console.log(`AgentRouter proxy running on http://127.0.0.1:${PORT}`);

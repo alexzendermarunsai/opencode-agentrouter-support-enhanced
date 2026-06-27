@@ -85,15 +85,21 @@ Place both `agenrouter_server.js` and `opencode.jsonc` in the same directory —
 ### 2. Install dependencies
 
 ```bash
-npm install express cors openai
+npm install express cors openai dotenv
 ```
 
 ### 3. Configure your API key
 
-Open `agenrouter_server.js` and replace the placeholder API key on line 11:
+Copy the `.env.example` file to `.env` and add your API key:
 
-```js
-apiKey: "sk-your-actual-key-here",
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and replace `your-api-key-here` with your actual API key:
+
+```
+AGENTROUTER_API_KEY=sk-your-actual-key-here
 ```
 
 ### 4. Start the proxy
@@ -123,7 +129,12 @@ You can also merge the `provider` section into your existing `opencode.jsonc`.
 
 ## Usage
 
-Once everything is running, select **AgentRouter** as your provider in OpenCode and pick one of the available models: **deepseek v4 pro**, **deepseek v4 flash**, or **glm 5.1**.
+Once everything is running, select **AgentRouter** as your provider in OpenCode and pick one of the available models:
+- **claude-opus-4-6** - Claude Opus 4.6
+- **claude-opus-4-7** - Claude Opus 4.7
+- **claude-opus-4-8** - Claude Opus 4.8
+- **gpt-5.5** - GPT-5.5
+- **glm-5.2** - GLM-5.2
 
 ### Verify the proxy
 
@@ -139,9 +150,7 @@ curl http://127.0.0.1:4000/
 curl http://127.0.0.1:4000/v1/models
 ```
 
-```json
-{ "object": "list", "data": [{ "id": "deepseek-v4-pro", ... }] }
-```
+Returns live models from agentrouter API (claude-opus-4-6, claude-opus-4-7, claude-opus-4-8, gpt-5.5, glm-5.2).
 
 ---
 
@@ -149,6 +158,11 @@ curl http://127.0.0.1:4000/v1/models
 
 ```
 ├── agenrouter_server.js   # Proxy server (the core)
+├── .env.example           # API key template
+├── .env                   # Your API key (not committed)
+├── .gitignore             # Prevents committing secrets
+├── package.json           # Dependencies
+├── package-lock.json      # Lockfile
 ├── opencode.jsonc         # OpenCode provider configuration
 ├── LICENSE
 └── README.md
@@ -162,9 +176,15 @@ curl http://127.0.0.1:4000/v1/models
 
 | Variable | Location | Description |
 |----------|----------|-------------|
-| `apiKey` | Line 11 | Your AgentRouter API key **(required)** |
-| `PORT` | Line 93 | Port to run the proxy on (default: `4000`) |
-| `baseURL` | Line 12 | AgentRouter API base URL |
+| `apiKey` | Line 12 | Reads from `process.env.AGENTROUTER_API_KEY` |
+| `PORT` | Line 100 | Port to run the proxy on (default: `4000`) |
+| `baseURL` | Line 13 | AgentRouter API base URL |
+
+### `.env`
+
+| Variable | Description |
+|----------|-------------|
+| `AGENTROUTER_API_KEY` | Your AgentRouter API key **(required)** |
 
 ### `opencode.jsonc`
 
@@ -172,9 +192,11 @@ Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai
 
 | Model ID | Display Name |
 |----------|-------------|
-| `deepseek-v4-pro` | deepseek v4 pro |
-| `deepseek-v4-flash` | deepseek v4 flash |
-| `glm-5.1` | glm 5.1 |
+| `claude-opus-4-6` | Claude Opus 4.6 |
+| `claude-opus-4-7` | Claude Opus 4.7 |
+| `claude-opus-4-8` | Claude Opus 4.8 |
+| `gpt-5.5` | GPT-5.5 |
+| `glm-5.2` | GLM-5.2 |
 
 ---
 
@@ -182,7 +204,7 @@ Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai
 
 ### Change the proxy port
 
-Only needed if port **4000** is already in use. Edit line 93 in `agenrouter_server.js`:
+Only needed if port **4000** is already in use. Edit line 100 in `agenrouter_server.js`:
 
 ```js
 const PORT = 5000; // change to any available port
@@ -192,7 +214,7 @@ Then update the `baseURL` in `opencode.jsonc` to match the new port.
 
 ### Point to a different API base URL
 
-If AgentRouter changes their endpoint, update `agenrouter_server.js:12`:
+If AgentRouter changes their endpoint, update `agenrouter_server.js:13`:
 
 ```js
 baseURL: "https://agentrouter.org/v1",
@@ -200,12 +222,31 @@ baseURL: "https://agentrouter.org/v1",
 
 ---
 
-## Contact
+## Recent Updates
 
-- **Telegram:** [@Jvlock](https://t.me/Jvlock)
-- **Email:** [faresnoser0@gmail.com](mailto:faresnoser0@gmail.com)
+### v1.1.0 (2026-06-27)
+- **Security:** Replaced hardcoded API key with dotenv environment variables
+- **Dynamic Models:** `/v1/models` now proxies live models from agentrouter API
+- **Error Handling:** Added request validation, stream chunk validation, and structured error responses
+- **Package Management:** Added `package.json` and `package-lock.json`
+- **Git Hygiene:** Added `.gitignore` to prevent committing secrets
+- **Available Models:** Updated to support claude-opus-4-6, claude-opus-4-7, claude-opus-4-8, gpt-5.5, and glm-5.2
 
-Feel free to reach out for questions, suggestions, or feedback.
+### v1.0.0 (Original)
+- Initial release with basic proxy server
+- Hardcoded API key configuration
+- Static model list (deepseek-v4-pro, deepseek-v4-flash, glm-5.1)
+
+---
+
+## Credits
+
+This project is an enhanced fork of [opencode-agentrouter-support](https://github.com/Fares-Nosair/opencode-agentrouter-support) by [Fares Nosair](https://github.com/Fares-Nosair).
+
+Original work provided the foundation for this improved version with:
+- Basic proxy server implementation
+- OpenCode provider configuration
+- Initial documentation
 
 ---
 

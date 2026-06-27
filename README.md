@@ -45,9 +45,12 @@
 - [How it works](#how-it-works)
 - [Setup](#setup)
 - [Usage](#usage)
+- [Discovering Available Models](#discovering-available-models)
 - [Project structure](#project-structure)
 - [Configuration](#configuration)
 - [Customization](#customization)
+- [Recent Updates](#recent-updates)
+- [Credits](#credits)
 - [License](#license)
 
 ---
@@ -154,10 +157,79 @@ Returns live models from agentrouter API (claude-opus-4-6, claude-opus-4-7, clau
 
 ---
 
+## Discovering Available Models
+
+AgentRouter dynamically adds and removes models over time. This proxy automatically fetches the current model list from the AgentRouter API, so you always have access to the latest models.
+
+### Check Available Models
+
+Run the auto-discovery script:
+
+```bash
+./scripts/update-models.sh
+```
+
+Or manually check:
+
+```bash
+curl -s http://127.0.0.1:4000/v1/models | jq
+```
+
+### Model Changes
+
+AgentRouter may:
+- **Add new models** - These automatically appear in `/v1/models`
+- **Remove models** - These disappear from the available list
+- **Update pricing** - Costs may change without notice
+
+### Updating OpenCode Configuration
+
+When models change, update your `opencode.jsonc` to match:
+
+1. **Check current models:**
+   ```bash
+   curl -s http://127.0.0.1:4000/v1/models | jq -r '.data[].id'
+   ```
+
+2. **Update `opencode.jsonc`** - Add/remove model entries in the `agentrouter.models` section:
+   ```json
+   "models": {
+     "new-model-id": {
+       "name": "New Model Name",
+       "id": "new-model-id",
+       "reasoning": true,
+       "tool_call": true,
+       "interleaved": true,
+       "status": "active",
+       "limit": {
+         "context": 200000,
+         "output": 32000
+       },
+       "cost": {
+         "input": 1.0,
+         "output": 2.0
+       }
+     }
+   }
+   ```
+
+3. **Restart OpenCode** to pick up changes.
+
+### Model Research
+
+For detailed model specifications (context window, pricing, capabilities):
+- Check [AgentRouter documentation](https://agentrouter.org)
+- Use `/explore` agent to research specific model specs
+- Test models directly via the proxy
+
+---
+
 ## Project structure
 
 ```
 ├── agenrouter_server.js   # Proxy server (the core)
+├── scripts/
+│   └── update-models.sh   # Auto-discover available models
 ├── .env.example           # API key template
 ├── .env                   # Your API key (not committed)
 ├── .gitignore             # Prevents committing secrets

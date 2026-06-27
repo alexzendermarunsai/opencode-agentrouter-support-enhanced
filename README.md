@@ -163,7 +163,13 @@ AgentRouter dynamically adds and removes models over time. This proxy automatica
 
 ### Check Available Models
 
-Run the auto-discovery script:
+First, make the script executable (if not already):
+
+```bash
+chmod +x scripts/update-models.sh
+```
+
+Then run the auto-discovery script:
 
 ```bash
 ./scripts/update-models.sh

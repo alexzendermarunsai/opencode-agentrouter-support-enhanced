@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "provider": {
+    "agentrouter": {
+      "name": "AgenRouter",
+      "npm": "@ai-sdk/openai-compatible",
+
+      "options": {
+        "baseURL": "http://127.0.0.1:4000/v1",
+        "apiKey": "dummy"
+      },
+
+      "models": {
+        "glm-5.1": {
+          "name": "glm 5.1",
+          "id": "glm-5.1"
+        },
+
+        "claude-opus-4-7": {
+          "name": "Claude Opus 4.7",
+          "id": "claude-opus-4-7"
+        },
+
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "id": "claude-sonnet-4-6"
+        }
+      }
+    }
+}

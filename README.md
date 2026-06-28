@@ -83,7 +83,11 @@ AgentRouter offers an OpenAI-compatible API, but OpenCode needs providers regist
 
 ### 1. Clone or download the files
 
-Place both `agenrouter_server.js` and `opencode.jsonc` in the same directory — preferably your OpenCode config directory (`C:\Users\<you>\.config\opencode\`). Keeping them together makes management easier.
+Place `agenrouter_server.js` in your OpenCode config directory. Copy `opencode.jsonc.template` to create your `opencode.jsonc` configuration:
+
+```bash
+cp opencode.jsonc.template ~/.config/opencode/opencode.jsonc
+```
 
 ### 2. Install dependencies
 
@@ -119,14 +123,13 @@ AgentRouter proxy running on http://127.0.0.1:4000
 
 ### 5. Configure OpenCode
 
-Place the `opencode.jsonc` file in your OpenCode config directory (or keep it there if you already placed both files together in step 1):
+Copy the template to your OpenCode config directory:
 
-| Platform | Config path |
-|----------|-------------|
-| Windows | `C:\Users\<you>\.config\opencode\opencode.jsonc` |
-| macOS / Linux | `~/.opencode/opencode.jsonc` |
+```bash
+cp opencode.jsonc.template ~/.config/opencode/opencode.jsonc
+```
 
-You can also merge the `provider` section into your existing `opencode.jsonc`.
+Edit `~/.config/opencode/opencode.jsonc` to customize models and settings.
 
 ---
 
@@ -233,15 +236,15 @@ For detailed model specifications (context window, pricing, capabilities):
 ## Project structure
 
 ```
-├── agenrouter_server.js   # Proxy server (the core)
+├── agenrouter_server.js      # Proxy server (the core)
 ├── scripts/
-│   └── update-models.sh   # Auto-discover available models
-├── .env.example           # API key template
-├── .env                   # Your API key (not committed)
-├── .gitignore             # Prevents committing secrets
-├── package.json           # Dependencies
-├── package-lock.json      # Lockfile
-├── opencode.jsonc         # OpenCode provider configuration
+│   └── update-models.sh      # Auto-discover available models
+├── .env.example              # API key template
+├── .env                      # Your API key (not committed)
+├── .gitignore                # Prevents committing secrets
+├── package.json              # Dependencies
+├── package-lock.json         # Lockfile
+├── opencode.jsonc.template   # OpenCode provider config template
 ├── LICENSE
 └── README.md
 ```
@@ -264,7 +267,13 @@ For detailed model specifications (context window, pricing, capabilities):
 |----------|-------------|
 | `AGENTROUTER_API_KEY` | Your AgentRouter API key **(required)** |
 
-### `opencode.jsonc`
+### `opencode.jsonc.template`
+
+Template file for OpenCode provider configuration. Copy to `~/.config/opencode/opencode.jsonc` and customize:
+
+```bash
+cp opencode.jsonc.template ~/.config/opencode/opencode.jsonc
+```
 
 Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai-compatible` adapter. It connects to `http://127.0.0.1:4000/v1` and exposes the following models:
 
@@ -275,6 +284,8 @@ Registers a custom provider named `agentrouter` using OpenCode's `@ai-sdk/openai
 | `claude-opus-4-8` | Claude Opus 4.8 |
 | `gpt-5.5` | GPT-5.5 |
 | `glm-5.2` | GLM-5.2 |
+
+**Note:** `opencode.jsonc.template` is a reference file. Always work with your own `opencode.jsonc` to avoid conflicts when pulling updates.
 
 ---
 

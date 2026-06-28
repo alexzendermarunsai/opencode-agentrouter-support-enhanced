@@ -49,6 +49,7 @@
 - [Project structure](#project-structure)
 - [Configuration](#configuration)
 - [Customization](#customization)
+- [Running as a Service](#running-as-a-service)
 - [Recent Updates](#recent-updates)
 - [Credits](#credits)
 - [License](#license)
@@ -236,15 +237,18 @@ For detailed model specifications (context window, pricing, capabilities):
 ## Project structure
 
 ```
-├── agenrouter_server.js      # Proxy server (the core)
+├── agenrouter_server.js          # Proxy server (the core)
 ├── scripts/
-│   └── update-models.sh      # Auto-discover available models
-├── .env.example              # API key template
-├── .env                      # Your API key (not committed)
-├── .gitignore                # Prevents committing secrets
-├── package.json              # Dependencies
-├── package-lock.json         # Lockfile
-├── opencode.jsonc.template   # OpenCode provider config template
+│   └── update-models.sh          # Auto-discover available models
+├── agentrouter-proxy.service     # Systemd service file
+├── Dockerfile                    # Docker image definition
+├── docker-compose.yml            # Docker Compose configuration
+├── .env.example                  # API key template
+├── .env                          # Your API key (not committed)
+├── .gitignore                    # Prevents committing secrets
+├── package.json                  # Dependencies
+├── package-lock.json             # Lockfile
+├── opencode.jsonc.template       # OpenCode provider config template
 ├── LICENSE
 └── README.md
 ```
@@ -307,6 +311,114 @@ If AgentRouter changes their endpoint, update `agenrouter_server.js:13`:
 
 ```js
 baseURL: "https://agentrouter.org/v1",
+```
+
+---
+
+## Running as a Service
+
+### Option 1: Systemd User Service (Recommended)
+
+Run the proxy as a background service that starts automatically on login.
+
+#### 1. Copy the service file
+
+```bash
+cp agentrouter-proxy.service ~/.config/systemd/user/
+```
+
+#### 2. Enable and start the service
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable agentrouter-proxy
+systemctl --user start agentrouter-proxy
+```
+
+#### 3. Useful commands
+
+```bash
+# Check status
+systemctl --user status agentrouter-proxy
+
+# Restart service
+systemctl --user restart agentrouter-proxy
+
+# Stop service
+systemctl --user stop agentrouter-proxy
+
+# View logs
+journalctl --user -u agentrouter-proxy -f
+
+# Disable auto-start
+systemctl --user disable agentrouter-proxy
+```
+
+#### 4. Auto-start on graphical login (optional)
+
+```bash
+loginctl enable-linger $USER
+```
+
+### Option 2: Docker Container
+
+Run the proxy in a Docker container.
+
+#### 1. Build the image
+
+```bash
+docker build -t agentrouter-proxy .
+```
+
+#### 2. Run the container
+
+```bash
+docker run -d \
+  --name agentrouter-proxy \
+  -p 4000:4000 \
+  --env-file .env \
+  --restart unless-stopped \
+  agentrouter-proxy
+```
+
+#### 3. Or use Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+#### 4. Useful commands
+
+```bash
+# View logs
+docker logs -f agentrouter-proxy
+
+# Stop container
+docker stop agentrouter-proxy
+
+# Start container
+docker start agentrouter-proxy
+
+# Remove container
+docker rm agentrouter-proxy
+
+# Rebuild image
+docker-compose up -d --build
+```
+
+### Option 3: Manual Background Process
+
+For quick testing without systemd or Docker:
+
+```bash
+# Start in background
+nohup node agenrouter_server.js > agentrouter.log 2>&1 &
+
+# Get process ID
+pgrep -f agenrouter_server.js
+
+# Stop process
+kill $(pgrep -f agenrouter_server.js)
 ```
 
 ---

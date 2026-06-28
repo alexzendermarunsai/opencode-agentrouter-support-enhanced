@@ -1,0 +1,13 @@
+[Unit]
+Description=AgentRouter Proxy for OpenCode
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/opencode-agentrouter-support
+ExecStart=/usr/bin/node %h/opencode-agentrouter-support/agenrouter_server.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

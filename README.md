@@ -264,12 +264,14 @@ For detailed model specifications (context window, pricing, capabilities):
 | `apiKey` | Line 12 | Reads from `process.env.AGENTROUTER_API_KEY` |
 | `PORT` | Line 100 | Port to run the proxy on (default: `4000`) |
 | `baseURL` | Line 13 | AgentRouter API base URL |
+| `PROXY_API_KEY` | Line 7 | Bearer token for /v1 auth. Skipped if unset |
 
 ### `.env`
 
 | Variable | Description |
 |----------|-------------|
 | `AGENTROUTER_API_KEY` | Your AgentRouter API key **(required)** |
+| `PROXY_API_KEY` | Bearer token auth for /v1 endpoints. Leave empty to disable auth **(optional)** |
 
 ### `opencode.jsonc.template`
 
@@ -315,11 +317,94 @@ baseURL: "https://agentrouter.org/v1",
 
 ---
 
+## Security
+
+### Optional Bearer Token Auth
+
+The proxy supports optional Bearer token authentication on `/v1` endpoints. When enabled, requests must include an `Authorization: Bearer <key>` header.
+
+Enable it by setting `PROXY_API_KEY` in your `.env`:
+
+```
+AGENTROUTER_API_KEY=sk-your-agentrouter-key
+PROXY_API_KEY=sk-your-generated-secret
+```
+
+Auth is automatically skipped if `PROXY_API_KEY` is not set — backwards compatible with local-only setups.
+
+### Exposing via Cloudflare Tunnel
+
+To access the proxy publicly via Cloudflare Tunnel:
+
+1. Install `cloudflared` and authenticate your tunnel
+2. Point the tunnel ingress at `http://agentrouter-proxy:4000`
+3. Add a CNAME DNS record: `your-subdomain.yourdomain.com` → `your-tunnel-id.cfargotunnel.com`
+4. Set `PROXY_API_KEY` to prevent unauthorized access
+5. Update your `opencode.jsonc`:
+
+```jsonc
+"options": {
+  "baseURL": "https://your-subdomain.yourdomain.com/v1",
+  "apiKey": "sk-your-generated-secret"
+}
+```
+
+---
+
 ## Running as a Service
 
-### Option 1: Systemd User Service (Recommended)
+### Option 1: Docker Container (Recommended)
 
-Run the proxy as a background service that starts automatically on login.
+Run the proxy in a Docker container with automatic restarts.
+
+#### 1. Build the image
+
+```bash
+docker build -t agentrouter-proxy .
+```
+
+#### 2. Run the container
+
+```bash
+docker run -d \
+  --name agentrouter-proxy \
+  -p 4000:4000 \
+  --env-file .env \
+  --restart unless-stopped \
+  agentrouter-proxy
+```
+
+#### 3. Or use Docker Compose
+
+```bash
+docker compose up -d
+```
+
+Rebuild after code changes:
+
+```bash
+docker compose up -d --build
+```
+
+#### 4. Useful commands
+
+```bash
+# View logs
+docker logs -f agentrouter-proxy
+
+# Stop container
+docker compose down
+
+# Start container
+docker compose up -d
+
+# Rebuild image
+docker compose up -d --build
+```
+
+### Option 2: Systemd User Service (Legacy)
+
+Manages the proxy via systemd. Only needed if not using Docker.
 
 #### 1. Copy the service file
 
@@ -354,61 +439,9 @@ journalctl --user -u agentrouter-proxy -f
 systemctl --user disable agentrouter-proxy
 ```
 
-#### 4. Auto-start on graphical login (optional)
-
-```bash
-loginctl enable-linger $USER
-```
-
-### Option 2: Docker Container
-
-Run the proxy in a Docker container.
-
-#### 1. Build the image
-
-```bash
-docker build -t agentrouter-proxy .
-```
-
-#### 2. Run the container
-
-```bash
-docker run -d \
-  --name agentrouter-proxy \
-  -p 4000:4000 \
-  --env-file .env \
-  --restart unless-stopped \
-  agentrouter-proxy
-```
-
-#### 3. Or use Docker Compose
-
-```bash
-docker-compose up -d
-```
-
-#### 4. Useful commands
-
-```bash
-# View logs
-docker logs -f agentrouter-proxy
-
-# Stop container
-docker stop agentrouter-proxy
-
-# Start container
-docker start agentrouter-proxy
-
-# Remove container
-docker rm agentrouter-proxy
-
-# Rebuild image
-docker-compose up -d --build
-```
-
 ### Option 3: Manual Background Process
 
-For quick testing without systemd or Docker:
+For quick testing without Docker or systemd:
 
 ```bash
 # Start in background
@@ -424,6 +457,11 @@ kill $(pgrep -f agenrouter_server.js)
 ---
 
 ## Recent Updates
+
+### v1.2.0 (2026-07-01)
+- **Security:** Added optional Bearer token auth via `PROXY_API_KEY` using `crypto.timingSafeEqual`
+- **Docker Networking:** Container attaches to external Docker networks for sidecar tunnel setups
+- **Documentation:** Added Cloudflare Tunnel guide and auth configuration docs
 
 ### v1.1.0 (2026-06-27)
 - **Security:** Replaced hardcoded API key with dotenv environment variables

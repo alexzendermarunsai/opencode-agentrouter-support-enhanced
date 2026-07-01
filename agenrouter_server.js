@@ -1,12 +1,29 @@
 const express = require("express");
 const cors = require("cors");
+const { timingSafeEqual } = require("crypto");
 const OpenAI = require("openai");
 require("dotenv").config();
+
+const PROXY_API_KEY = process.env.PROXY_API_KEY;
 
 const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
+
+// Optional Bearer token auth for /v1 endpoints (skip if PROXY_API_KEY not set)
+app.use("/v1", (req, res, next) => {
+  if (!PROXY_API_KEY) return next();
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return res.status(401).json({ error: { message: "Unauthorized", type: "auth_error", code: 401 } });
+  }
+  const key = auth.slice(7);
+  if (key.length !== PROXY_API_KEY.length || !timingSafeEqual(Buffer.from(key), Buffer.from(PROXY_API_KEY))) {
+    return res.status(401).json({ error: { message: "Unauthorized", type: "auth_error", code: 401 } });
+  }
+  next();
+});
 
 const client = new OpenAI({
   apiKey: process.env.AGENTROUTER_API_KEY,
